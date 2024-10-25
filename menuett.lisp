@@ -51,10 +51,10 @@
 
 (defmethod swipe-right ((d display) new-lines)
   (write-lcd d +lcd-cursor-home+)
-  (loop for pos from 0 to 11
+  (loop for pos from 0 to 39
 	for coeff downfrom 1 by 0.2
 	do (write-lcd d +lcd-scroll-right+)
-	   (when (and new-lines (> pos 5))
+	   (when (and new-lines (> pos 19))
 	     (write-lcd d (car new-lines))
 	     (setf new-lines (cdr new-lines))
 	     (write-lcd d (format nil "~a~%" +lcd-kill+)))
