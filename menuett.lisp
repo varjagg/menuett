@@ -62,6 +62,8 @@
 
 (defparameter *m1* '("A very important txt" "  On a few lines" "  This is four lines" "  To be precise"))
 
+(defparameter *m2* '("Another striking txt" "  Also short" "  Still four lines" "  Working flawlessly"))
+
 
 
 (defun test ()
