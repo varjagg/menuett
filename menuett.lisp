@@ -24,6 +24,8 @@
    (height :accessor height
 	   :initarg :height
 	   :initform 4)
+   (buzzer-actuator :accessor buzzer-actuator
+		    :initarg :buzzer-actuator)
    (path :accessor path :initarg :path
 	 :initform "/dev/lcd")))
 
