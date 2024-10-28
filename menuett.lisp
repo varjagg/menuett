@@ -63,3 +63,5 @@
 	     (write-lcd d (format nil "~a~%" +lcd-kill+)))
 	   (sleep (* 0.08 (max 0 coeff)))))
 
+(defmethod initialize ((d display))
+  (write-lcd d (format nil "~a~a~a" +lcd-init+ +lcd-cursor-off+ +lcd-blink-off+)))
