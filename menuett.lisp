@@ -18,7 +18,13 @@
 (alexandria:define-constant +lcd-kill+ (escaped "[Lk") :test #'string-equal)
 
 (defclass display ()
-  ((path :accessor path :initarg :path
+  ((width :accessor width
+	  :initarg :width
+	  :initform 20)
+   (height :accessor height
+	   :initarg :height
+	   :initform 4)
+   (path :accessor path :initarg :path
 	 :initform "/dev/lcd")))
 
 
@@ -54,10 +60,10 @@
 
 (defmethod swipe-right ((d display) new-lines &optional (scroll-code +lcd-scroll-right+))
   (write-lcd d +lcd-cursor-home+)
-  (loop for pos from 0 to 39
+  (loop for pos from 0 to (1- (width d))
 	for coeff downfrom 1 by 0.2
 	do (write-lcd d scroll-code)
-	   (when (and new-lines (> pos 19))
+	   (when (and new-lines (> pos (1- (/ width 2))))
 	     (write-lcd d (car new-lines))
 	     (setf new-lines (cdr new-lines))
 	     (write-lcd d (format nil "~a~%" +lcd-kill+)))
