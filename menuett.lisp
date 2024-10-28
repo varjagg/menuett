@@ -62,14 +62,23 @@
 
 (defmethod swipe-right ((d display) new-lines &optional (scroll-code +lcd-scroll-right+))
   (write-lcd d +lcd-cursor-home+)
-  (loop for pos from 0 to (1- (width d))
-	for coeff downfrom 1 by 0.2
-	do (write-lcd d scroll-code)
-	   (when (and new-lines (> pos (1- (/ width 2))))
-	     (write-lcd d (car new-lines))
-	     (setf new-lines (cdr new-lines))
-	     (write-lcd d (format nil "~a~%" +lcd-kill+)))
-	   (sleep (* 0.08 (max 0 coeff)))))
+  (unwind-protect
+       (loop for pos from 0 to (1- (width d))
+	     for coeff downfrom 1 by 0.2
+	     do (write-lcd d scroll-code)
+		(when (= pos (1+ (/ (width d) 2)))
+		  (funcall (buzzer-actuator d) t))
+		(when (and new-lines (> pos (1- (/ (width d) 2))))
+		  (write-lcd d (car new-lines))
+		  (setf new-lines (cdr new-lines))
+		  (write-lcd d (format nil "~a~%" +lcd-kill+)))
+		(sleep (* 0.08 (max 0 coeff))))
+    (funcall (buzzer-actuator d) nil)))
+
+(defun buzz (action)
+  (with-open-file (s "/sys/class/leds/green_l/brightness" :direction :output :if-exists :append)
+    (write-string (if action "255" "0") s)))
 
 (defmethod initialize ((d display))
+  (setf (buzzer-actuator d) 'buzz)
   (write-lcd d (format nil "~a~a~a" +lcd-init+ +lcd-cursor-off+ +lcd-blink-off+)))
