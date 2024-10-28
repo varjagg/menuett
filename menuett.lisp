@@ -61,4 +61,5 @@
 	     (write-lcd d (car new-lines))
 	     (setf new-lines (cdr new-lines))
 	     (write-lcd d (format nil "~a~%" +lcd-kill+)))
-	   (sleep (* 0.1 (max 0 coeff)))))
+	   (sleep (* 0.08 (max 0 coeff)))))
+
