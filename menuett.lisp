@@ -66,7 +66,7 @@
        (loop for pos from 0 to (1- (width d))
 	     for coeff downfrom 1 by 0.2
 	     do (write-lcd d scroll-code)
-		(when (= pos (1+ (/ (width d) 2)))
+		(when (= pos (1- (width d)))
 		  (funcall (buzzer-actuator d) t))
 		(when (and new-lines (> pos (1- (/ (width d) 2))))
 		  (write-lcd d (car new-lines))
