@@ -7,3 +7,12 @@
 (defun test ()
   ;(write-lcd *lcd* +lcd-cls+)
   (loop repeat 4 do (write-lcd *lcd* (format nil "Hullo Guvnor nice!~%"))))
+
+
+(defun test2 ()
+  (initialize *lcd*)
+  (loop
+    (swipe-right *lcd* *m1*)
+    (sleep 1)
+    (swipe-left *lcd* *m2*)
+    (sleep 1)))
