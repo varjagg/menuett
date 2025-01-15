@@ -17,6 +17,8 @@
 (alexandria:define-constant +lcd-init+ (escaped "[LI") :test #'string-equal)
 (alexandria:define-constant +lcd-kill+ (escaped "[Lk") :test #'string-equal)
 
+(defparameter *up-menu-message* '("Return to previous menu" "" "" ""))
+
 (defclass display ()
   ((width :accessor width
 	  :initarg :width
@@ -82,3 +84,47 @@
 (defmethod initialize ((d display))
   (setf (buzzer-actuator d) 'buzz)
   (write-lcd d (format nil "~a~a~a" +lcd-init+ +lcd-cursor-off+ +lcd-blink-off+)))
+
+(defun dummy-menu-item (d item)
+  (declare (ignore d item))
+  (print "Called a dummy"))
+
+(defun invoke-submenu (d item)
+  (menu-interaction d item))
+
+(defun go-up (d &optional item)
+  (declare (ignore d item))
+  (throw 'up nil))
+
+(defmethod menu-interaction ((d display) entry-menu)
+  (initialize d)
+  (let ((position 0)
+	(menu (cdr entry-menu))
+	rise-event)
+    (writeout-screen d (car (aref menu position)))
+    (cl-evdev:with-evdev-devices (event "/dev/input/event2" "/dev/input/by-path/platform-keys-event")
+      (when (eql (class-name (class-of (print event))) 'cl-evdev:keyboard-event)
+	(cond ((and (not rise-event) (eql (state event) :pressed))
+	       (setf rise-event event))
+	      ((and rise-event
+		    (eql (print (state event)) :released)
+		    (eql (name event) (name rise-event)))
+	       (setf rise-event nil)
+	       ((case (cl-evdev:name event)
+		 (0 (catch 'up (funcall (cdr (aref menu position)) d (car (aref menu position)))))
+		 (cl-evdev::f1 (let ((new-position (print (alexandria:clamp (1- position) 0 (1- (length menu))))))
+		       (unless (= new-position position)
+			 (setf position new-position)
+			 (let* ((item (car (aref menu position)))
+				(text (cond ((null (car item)) *up-menu-message*)
+					    ((arrayp (cdr item)) (car item))
+					    (t item))))
+			   (swipe-right d text)))))
+		 (cl-evdev::f2 (let ((new-position (alexandria:clamp (1+ position) 0 (1- (length menu)))))
+		       (unless (= new-position position)
+			 (setf position new-position)
+			 (let* ((item (car (aref menu position)))
+				(text (cond ((null (car item)) *up-menu-message*)
+					    ((arrayp (cdr item)) (car item))
+					    (t item))))
+			   (swipe-left d text)))))))))))))
