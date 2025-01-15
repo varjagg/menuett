@@ -1,4 +1,4 @@
 ;;;; package.lisp
 
 (defpackage #:menuett
-  (:use #:cl))
+  (:use #:cl #:cl-evdev))
