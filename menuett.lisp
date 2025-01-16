@@ -100,6 +100,7 @@
   (initialize d)
   (let ((position 0)
 	(menu (cdr entry-menu))
+	menu-stack
 	rise-event)
     (writeout-screen d (car (aref menu position)))
     (cl-evdev:with-evdev-devices (event "/dev/input/event2" "/dev/input/by-path/platform-keys-event")
@@ -111,9 +112,20 @@
 		    (eql (name event) (name rise-event)))
 	       (setf rise-event nil)
 	       (case (cl-evdev:name event)
-		 (0 (when (brake (eql :exit
-			       (funcall (cdr (aref menu position)) d (car (aref menu position)))))
-		      (return-from menu-interaction)))
+		 (0
+		  (case (cdr (aref menu position))
+		    (:descend
+		     (push (cons position menu) menu-stack)
+		     (setf position 0
+			   menu (car (aref menu position))))
+		    (:exit
+		     (destructuring-bind (p . m) (pop menu-stack)
+		       (setf position p
+			     menu m)))
+		    (otherwise
+		     (funcall (cdr (aref menu position)) d (car (aref menu position)))))
+		  (write-lcd d +lcd-cls+)
+		  (writeout-screen d (car (aref menu position))))
 		 (cl-evdev::f1 (let ((new-position (print (alexandria:clamp (1- position) 0 (1- (length menu))))))
 				 (unless (= new-position position)
 				   (setf position new-position)
