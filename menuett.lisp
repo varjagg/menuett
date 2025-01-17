@@ -81,7 +81,7 @@
   (with-open-file (s "/sys/class/leds/green_l/brightness" :direction :output :if-exists :append)
     (write-string (if action "255" "0") s)))
 
-(defmethod initialize ((d display))
+(defmethod initialize-display ((d display))
   (setf (buzzer-actuator d) 'buzz)
   (write-lcd d (format nil "~a~a~a" +lcd-init+ +lcd-cursor-off+ +lcd-blink-off+)))
 
@@ -90,7 +90,7 @@
   (print "Called a dummy"))
 
 (defmethod menu-interaction ((d display) entry-menu)
-  (initialize d)
+  (initialize-display d)
   (let ((position 0)
 	(menu (cdr entry-menu))
 	menu-stack
