@@ -24,9 +24,9 @@
     (swipe-left *lcd* *m2*)
     (sleep 1)))
 
-(defparameter *sub1* '("Submenu Item 1" "" "" ""))
-(defparameter *sub2* '("Submenu Item 2" "" "" ""))
+(defparameter *sub1* '("Submenu Item 1" "Parameter 1" "Parameter 2" "Summary"))
+(defparameter *sub2* '("Submenu Item 2" "Parameter 1" "Parameter 2" "Summary"))
 
-(defparameter *tm0* (cons (list "Submenu" "" "Click to descend" "") (make-array 3 :initial-contents `((,*sub1* . dummy-menu-item) (,*sub2* . dummy-menu-item) (nil . :exit)))))
+(defparameter *tm0* (cons (list "SUBMENU 1" "" "Click to descend" "") (make-array 3 :initial-contents `((,*sub1* . dummy-menu-item) (,*sub2* . dummy-menu-item) (nil . :exit)))))
 
 (defparameter *tm1* (cons (list "Main Menu" "" "" "") (make-array 3 :initial-contents `((,*m1* . dummy-menu-item) (,*m2* . dummy-menu-item) (,*tm0* . :descend)))))

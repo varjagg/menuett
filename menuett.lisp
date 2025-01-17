@@ -17,7 +17,7 @@
 (alexandria:define-constant +lcd-init+ (escaped "[LI") :test #'string-equal)
 (alexandria:define-constant +lcd-kill+ (escaped "[Lk") :test #'string-equal)
 
-(defparameter *up-menu-message* '("Return to previous menu" "" "" ""))
+(defparameter *up-menu-message* '("EXIT" "Return to" "previous menu" ""))
 
 (defclass display ()
   ((width :accessor width
