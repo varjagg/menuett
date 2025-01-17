@@ -109,8 +109,8 @@
 		  (case (cdr (aref menu position))
 		    (:descend
 		     (push (cons position menu) menu-stack)
-		     (setf position 0
-			   menu (car (aref menu position))))
+		     (setf menu (cdar (aref menu position))
+			   position 0))
 		    (:exit
 		     (destructuring-bind (p . m) (pop menu-stack)
 		       (setf position p
@@ -118,7 +118,9 @@
 		    (otherwise
 		     (funcall (cdr (aref menu position)) d (car (aref menu position)))))
 		  (write-lcd d +lcd-cls+)
-		  (writeout-screen d (car (aref menu position))))
+		  (writeout-screen d (if (eql :descend (cdr (aref menu position)))
+					 (caar (aref menu position))
+					 (car (aref menu position)))))
 		 (cl-evdev::f1 (let ((new-position (print (alexandria:clamp (1- position) 0 (1- (length menu))))))
 				 (unless (= new-position position)
 				   (setf position new-position)
