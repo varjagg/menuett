@@ -89,13 +89,6 @@
   (declare (ignore d item))
   (print "Called a dummy"))
 
-(defun invoke-submenu (d item)
-  (menu-interaction d item))
-
-(defun go-up (d item)
-  (declare (ignore d item))
-  :exit)
-
 (defmethod menu-interaction ((d display) entry-menu)
   (initialize d)
   (let ((position 0)
