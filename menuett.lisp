@@ -97,11 +97,11 @@
 	rise-event)
     (writeout-screen d (car (aref menu position)))
     (cl-evdev:with-evdev-devices (event "/dev/input/event2" "/dev/input/by-path/platform-keys-event")
-      (when (eql (class-name (class-of (print event))) 'cl-evdev:keyboard-event)
+      (when (eql (class-name (class-of event)) 'cl-evdev:keyboard-event)
 	(cond ((and (not rise-event) (eql (state event) :pressed))
 	       (setf rise-event event))
 	      ((and rise-event
-		    (eql (print (state event)) :released)
+		    (eql (state event) :released)
 		    (eql (name event) (name rise-event)))
 	       (setf rise-event nil)
 	       (case (cl-evdev:name event)
