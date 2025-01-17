@@ -133,3 +133,12 @@
 					 (t item))))
 			(funcall (if (eql (name event) 'cl-evdev::f1) 'swipe-right 'swipe-left)
 				 d text))))))))))))
+
+(defmethod make-menu-text ((d display) &rest lines)
+  (loop repeat (height d)
+	 for line in lines
+	 collecting (setf (subseq (make-array (width d)
+					      :initial-element #\Space
+					      :element-type 'character)
+				  0 (length line))
+			  line))))
